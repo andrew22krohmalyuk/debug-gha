@@ -28,10 +28,8 @@ jobs:
             
             console.log(context.ref);
             console.log(github.base_ref);
-            console.log(needs.set-build-params.outputs.base_ref);
             
             const issue_number = context.issue.number || issues.data[0].number
-            
             console.log(issue_number);
             
             github.rest.issues.createComment({
