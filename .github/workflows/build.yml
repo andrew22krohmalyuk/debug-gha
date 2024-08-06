@@ -11,7 +11,6 @@ on:
 
 jobs:
   manifest-permissions-changes-check:
-    needs: set-build-params
     name: Check manifest.json permissions
     runs-on: ubuntu-latest
     steps:
