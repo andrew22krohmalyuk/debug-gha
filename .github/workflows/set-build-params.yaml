@@ -70,7 +70,6 @@ jobs:
               channel: ref
             };
             
-#            console.log('branchConfig', branchConfig);
             console.log('config', config);
 
             const { environment, channel, extensionId, key } = config;
