@@ -34,6 +34,8 @@ jobs:
           echo "${{ inputs.ref_name }}"
           echo "${{ inputs.base_ref }}"
           echo "${{ inputs.branch }}"
+          echo ${{ github.head_ref }} 
+          echo ${{ github.ref_name }} 
 
   publish:
     needs: [set-build-params]
