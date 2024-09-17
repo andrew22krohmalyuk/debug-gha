@@ -34,20 +34,6 @@ jobs:
       - name: Checkout application repo
         uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # v4.1.1
 
-#      - name: Output if app version changed
-#        run: |
-#          git fetch origin stable
-#          git show origin/stable:package.json > base_package.json
-#
-#          RELEASED_VERSION=$(jq -S '.version' base_package.json)
-#          VERSION=$(jq -S '.version' package.json)
-#
-#          if [ "$RELEASED_VERSION" != "$VERSION" ]; then
-#            echo "APP_VERSION_CHANGED=true" >> $GITHUB_ENV
-#          else
-#            echo "APP_VERSION_CHANGED=false" >> $GITHUB_ENV
-#          fi
-
       - name: Set build params
         id: set-build-params
         uses: actions/github-script@60a0d83039c74a4aee543508d2ffcb1c3799cdea # v7.0.1
