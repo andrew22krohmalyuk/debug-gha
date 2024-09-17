@@ -32,4 +32,4 @@ jobs:
     with:
       artifact: 'chrome'
       extension_id: '${{ needs.set-build-params.outputs.extension_id }}'
-      channel: '${{ needs.set-build-params.outputs.channel }}'
+      channel: '${{ inputs.environment }}'
