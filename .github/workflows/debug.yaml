@@ -4,20 +4,21 @@ on:
   workflow_dispatch:
 
 jobs:
-  check-branch:
-    if: "${{ github.ref_name == 'develop' || github.ref_name == 'staging' ||  github.ref_name == 'beta' }}"
+  branch-warn:
+    if: "${{ github.ref_name != 'develop' || github.ref_name != 'staging' ||  github.ref_name != 'beta' }}"
     runs-on: ubuntu-latest
 
     steps:
       - name: Warning message
-        run: echo 'Publishing is allowed only for "develop", "staging" and "beta"'
+        run: echo 'Publishing is allowed only for "develop", "staging" and "beta"' >> $GITHUB_STEP_SUMMARY
 
   set-build-params:
+    if: "${{ github.ref_name == 'develop' || github.ref_name == 'staging' ||  github.ref_name == 'beta' }}"
     needs: [check-branch]
     uses: ./.github/workflows/set-build-params.yaml
 
   log:
-    needs: [check-branch]
+    needs: [set-build-params]
     runs-on: ubuntu-latest
     steps:
       - name: Log the inputs
