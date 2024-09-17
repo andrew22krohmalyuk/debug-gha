@@ -61,6 +61,10 @@ jobs:
             const branchConfig = require('./.github/workflows/set-build-params/config.json');
             const ref = process.env.EVENT_NAME === 'push' ? process.env.REF_NAME : process.env.BASE_REF;
 
+            console.log('process.env.REF_NAME', process.env.REF_NAME);
+            console.log('process.env.BASE_REF', process.env.BASE_REF);
+            console.log('ref', ref);
+            
             let branch = ref;
             for (const b of ['staging', 'beta', 'stable']) {
               if (branch.includes(b)) {
