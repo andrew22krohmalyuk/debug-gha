@@ -19,10 +19,10 @@ on:
 jobs:
   publish:
     runs-on: ubuntu-latest
-    permissions:
-      contents: read
-      pull-requests: write
-      id-token: write
+#    permissions:
+#      contents: read
+#      pull-requests: write
+#      id-token: write
 
     steps:
       - name: Log the inputs
