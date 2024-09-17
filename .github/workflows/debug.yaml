@@ -26,6 +26,13 @@ jobs:
 #      extension-id: '${{ needs.set-build-params.outputs.extension_id }}'
 #      is-release-build: "${{ needs.set-build-params.outputs.is_release_build == 'true' }}"
 
+  log:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Log the inputs
+        run: |
+          echo "${{ inputs.ref }}"
+
   publish:
     needs: [set-build-params]
     uses: ./.github/workflows/publish.yaml
