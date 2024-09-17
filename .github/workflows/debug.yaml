@@ -31,10 +31,6 @@ jobs:
     steps:
       - name: Log the inputs
         run: |
-          echo "${{ inputs.ref_name }}"
-          echo "${{ inputs.base_ref }}"
-          echo "${{ inputs.branch }}"
-          echo ${{ github.head_ref }} 
           echo ${{ github.ref_name }} 
 
   publish:
@@ -43,4 +39,4 @@ jobs:
     with:
       artifact: 'chrome'
       extension_id: '${{ needs.set-build-params.outputs.extension_id }}'
-      channel: '${{ inputs.environment }}'
+      channel: '${{ github.ref_name }} '
