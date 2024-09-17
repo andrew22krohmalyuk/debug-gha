@@ -8,6 +8,10 @@ jobs:
     if: "${{ github.ref_name == 'develop' || github.ref_name == 'staging' ||  github.ref_name == 'beta' }}"
     runs-on: ubuntu-latest
 
+    steps:
+      - name: Warning message
+        run: echo 'Publishing is allowed only for "develop", "staging" and "beta"'
+
   set-build-params:
     needs: [check-branch]
     uses: ./.github/workflows/set-build-params.yaml
