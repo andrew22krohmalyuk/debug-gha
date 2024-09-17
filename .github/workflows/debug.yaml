@@ -5,23 +5,19 @@ on:
 
 jobs:
   check-branch:
+    if: "${{ github.ref_name == 'develop' || github.ref_name == 'staging' ||  github.ref_name == 'beta' }}"
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v3
-
-      - name: Exit if the branch is not master
-        run: |
-          if [[ "${{ github.ref_name }}" != "develop" && "${{ github.ref_name }}" != "staging" && "${{ github.ref_name }}" != "beta" ]]; then
-            echo "Branch is not develop, staging, or beta, exiting."
-            exit 0
-          fi
+      - name: Warning message
+        run: echo 'Publishing is allowed only for "develop", "staging" and "beta"'
 
   set-build-params:
+    needs: [check-branch]
     uses: ./.github/workflows/set-build-params.yaml
 
   log:
+    needs: [check-branch]
     runs-on: ubuntu-latest
     steps:
       - name: Log the inputs
