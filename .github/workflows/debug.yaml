@@ -2,16 +2,16 @@ name: Publish to the Chrome Web Store
 
 on:
   workflow_dispatch:
-    inputs:
-      environment:
-        description: 'Environment'
-        required: true
-        default: 'develop'
-        type: choice
-        options:
-          - develop
-          - staging
-          - beta
+#    inputs:
+#      environment:
+#        description: 'Environment'
+#        required: true
+#        default: 'develop'
+#        type: choice
+#        options:
+#          - develop
+#          - staging
+#          - beta
 
 jobs:
   set-build-params:
