@@ -45,8 +45,7 @@ jobs:
         with:
           script: |
             const branchConfig = require('./.github/workflows/set-build-params/config.json');
-            // process.env.EVENT_NAME = workflow_dispatch
-            const pushOrDispatch = process.env.EVENT_NAME === 'push' || process.env.EVENT_NAME === 'workflow_dispatch'
+            const pushOrDispatch = process.env.EVENT_NAME === 'push' || process.env.EVENT_NAME === 'workflow_dispatch';
             const ref = pushOrDispatch ? process.env.REF_NAME : process.env.BASE_REF;
 
             console.log('process.env.EVENT_NAME', process.env.EVENT_NAME);
