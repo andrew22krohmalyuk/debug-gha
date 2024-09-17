@@ -1,0 +1,23 @@
+name: Debug
+
+on:
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: 'Environment'
+        required: true
+        default: 'develop'
+        type: choice
+        options:
+        - develop
+        - staging
+        - beta
+
+jobs:
+  log-the-inputs:
+    runs-on: ubuntu-latest
+    steps:
+      - run: |
+          echo "Environment: $ENVIRONMENT"
+        env:
+          ENVIRONMENT: ${{ inputs.environment }}
