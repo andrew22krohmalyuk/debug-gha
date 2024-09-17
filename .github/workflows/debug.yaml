@@ -5,6 +5,7 @@ on:
 
 jobs:
   check-branch:
+    if: "${{ github.ref_name == 'develop' || github.ref_name == 'staging' ||  github.ref_name == 'beta' }}"
     runs-on: ubuntu-latest
 
     steps:
@@ -19,9 +20,11 @@ jobs:
           fi
 
   set-build-params:
+    needs: [check-branch]
     uses: ./.github/workflows/set-build-params.yaml
 
   log:
+    needs: [check-branch]
     runs-on: ubuntu-latest
     steps:
       - name: Log the inputs
