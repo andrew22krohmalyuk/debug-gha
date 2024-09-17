@@ -1,0 +1,97 @@
+name: 'Set build params'
+
+on:
+  workflow_call:
+    outputs:
+      environment:
+        description: 'Environment build created with'
+        value: '${{ jobs.set-build-params.outputs.environment }}'
+      channel:
+        description: 'Channel build created with'
+        value: '${{ jobs.set-build-params.outputs.channel }}'
+      extension_id:
+        description: 'Extension id to use for publishing'
+        value: '${{ jobs.set-build-params.outputs.extension_id }}'
+      is_release_build:
+        description: 'PRs to develop do not produce release build'
+        value: '${{ jobs.set-build-params.outputs.is_release_build }}'
+      manifest_key:
+        description: 'Manifest key'
+        value: '${{ jobs.set-build-params.outputs.manifest_key }}'
+      is_app_version_changed:
+        description: 'Check if we are releasing new version'
+        value: '${{ jobs.set-build-params.outputs.is_app_version_changed }}'
+
+jobs:
+  set-build-params:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Install Image Dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y openssh-client git jq
+
+      - name: Checkout application repo
+        uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # v4.1.1
+
+      - name: Output if app version changed
+        run: |
+          git fetch origin stable
+          git show origin/stable:package.json > base_package.json
+          
+          RELEASED_VERSION=$(jq -S '.version' base_package.json)
+          VERSION=$(jq -S '.version' package.json)
+          
+          if [ "$RELEASED_VERSION" != "$VERSION" ]; then
+            echo "APP_VERSION_CHANGED=true" >> $GITHUB_ENV
+          else
+            echo "APP_VERSION_CHANGED=false" >> $GITHUB_ENV
+          fi
+
+      - name: Set build params
+        id: set-build-params
+        uses: actions/github-script@60a0d83039c74a4aee543508d2ffcb1c3799cdea # v7.0.1
+        env:
+          REF_NAME: '${{ github.ref_name }}'
+          BASE_REF: '${{ github.base_ref }}'
+          EVENT_NAME: '${{ github.event_name }}'
+          APP_VERSION_CHANGED: '${{ env.APP_VERSION_CHANGED }}'
+        with:
+          script: |
+            const branchConfig = require('./.github/workflows/set-build-params/config.json');
+            const ref = process.env.EVENT_NAME === 'push' ? process.env.REF_NAME : process.env.BASE_REF;
+
+            let branch = ref;
+            for (const b of ['staging', 'beta', 'stable']) {
+              if (branch.includes(b)) {
+                branch = b; // 'stable123' -> 'stable'
+                break;
+              }
+            }
+
+            // We do not want regression to run on pull request to develop
+            const isPrToDevelop = process.env.EVENT_NAME === 'pull_request' && branch === 'develop';
+            const isReleaseBuild = !!branchConfig[branch];
+
+            const config = branchConfig[branch] || {
+              ...branchConfig['develop'],
+              channel: ref
+            };
+
+            const { environment, channel, extensionId, key } = config;
+
+            core.setOutput('environment', environment);
+            core.setOutput('channel', channel);
+            core.setOutput('extension_id', extensionId);
+            core.setOutput('is_release_build', isReleaseBuild);
+            core.setOutput('manifest_key', key);
+            
+            core.setOutput('is_app_version_changed', process.env.APP_VERSION_CHANGED);
+
+    outputs:
+      environment: '${{ steps.set-build-params.outputs.environment }}'
+      channel: '${{ steps.set-build-params.outputs.channel }}'
+      extension_id: '${{ steps.set-build-params.outputs.extension_id }}'
+      is_release_build: '${{ steps.set-build-params.outputs.is_release_build }}'
+      manifest_key: '${{ steps.set-build-params.outputs.manifest_key }}'
+      is_app_version_changed: '${{ steps.set-build-params.outputs.is_app_version_changed }}'

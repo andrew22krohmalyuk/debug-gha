@@ -1,4 +1,4 @@
-name: Debug
+name: Publish to the Chrome Web Store
 
 on:
   workflow_dispatch:
@@ -9,15 +9,27 @@ on:
         default: 'develop'
         type: choice
         options:
-        - develop
-        - staging
-        - beta
+          - develop
+          - staging
+          - beta
 
 jobs:
-  log-the-inputs:
-    runs-on: ubuntu-latest
-    steps:
-      - run: |
-          echo "Environment: $ENVIRONMENT"
-        env:
-          ENVIRONMENT: ${{ inputs.environment }}
+  set-build-params:
+    uses: ./.github/workflows/set-build-params.yaml
+
+#  build:
+#    needs: set-build-params
+#    uses: virtru-corp/.github/.github/workflows/gmail-build.yaml@v1
+#    with:
+#      environment: '${{ needs.set-build-params.outputs.environment }}'
+#      channel: '${{ needs.set-build-params.outputs.channel }}'
+#      extension-id: '${{ needs.set-build-params.outputs.extension_id }}'
+#      is-release-build: "${{ needs.set-build-params.outputs.is_release_build == 'true' }}"
+
+  publish:
+    needs: [set-build-params]
+    uses: ./.github/workflows/publish.yaml
+    with:
+      artifact: 'chrome'
+      extension_id: '${{ needs.set-build-params.outputs.extension_id }}'
+      channel: '${{ needs.set-build-params.outputs.channel }}'

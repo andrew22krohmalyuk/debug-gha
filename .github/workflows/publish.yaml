@@ -1,0 +1,32 @@
+name: Publish to chrome store
+
+on:
+  workflow_call:
+    inputs:
+      artifact:
+        description: 'Artifact'
+        type: string
+        required: true
+      extension_id:
+        description: 'Extension id'
+        type: string
+        required: true
+      channel:
+        description: 'Channel'
+        type: string
+        required: true
+
+jobs:
+  publish:
+    runs-on: virtru-scale-set-runner
+    permissions:
+      contents: read
+      pull-requests: write
+      id-token: write
+
+    steps:
+      - name: Log the inputs
+        run: |
+          echo "${{ inputs.artifact }}"
+          echo "${{ inputs.extension_id }}"
+          echo "${{ inputs.channel }}"

@@ -1,0 +1,26 @@
+{
+  "develop": {
+    "environment": "develop",
+    "channel": "develop",
+    "extensionId": "extensionId-dev",
+    "key": "dev-key"
+  },
+  "staging": {
+    "environment": "staging",
+    "channel": "staging",
+    "extensionId": "extensionId-staging",
+    "key": "staging-key"
+  },
+  "beta": {
+    "environment": "production",
+    "channel": "beta",
+    "extensionId": "extensionId-beta",
+    "key": "beta-key"
+  },
+  "stable": {
+    "environment": "production",
+    "channel": "stable",
+    "extensionId": "extensionId-stable",
+    "key": "stable-key"
+  }
+}
