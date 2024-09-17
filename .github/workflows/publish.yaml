@@ -18,7 +18,7 @@ on:
 
 jobs:
   publish:
-    runs-on: virtru-scale-set-runner
+    runs-on: ubuntu-latest
     permissions:
       contents: read
       pull-requests: write
