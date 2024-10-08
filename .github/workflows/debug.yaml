@@ -2,34 +2,39 @@ name: Publish to the Chrome Web Store
 
 on:
   workflow_dispatch:
-    inputs:
-      environment:
-        description: 'Environment'
-        required: true
-        default: 'develop'
-        type: choice
-        options:
-          - develop
-          - staging
-          - beta
 
 jobs:
+  branch-warn:
+    # if: "${{ github.ref_name != 'develop' || github.ref_name != 'staging' ||  github.ref_name != 'beta' }}"
+    # if: ${{ !contains(fromJSON('["develop","staging","beta"]'), github.ref_name) }}
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Warning message
+        if: ${{ !contains(fromJSON('["develop","staging","beta"]'), github.ref_name) }}
+        # run: echo 'Publishing is allowed only for "develop", "staging" and "beta"' >> $GITHUB_STEP_SUMMARY
+        run: |
+          echo "::error file=branch-warn,title=Publishing is not allowed::Publishing is allowed only for 'develop', 'staging' and 'beta'"
+          exit 1
+
   set-build-params:
+    # if: "${{ github.ref_name == 'develop' || github.ref_name == 'staging' ||  github.ref_name == 'beta' }}"
+    if: ${{ contains(fromJSON('["develop","staging","beta"]'), github.ref_name) }}
+    needs: [branch-warn]
     uses: ./.github/workflows/set-build-params.yaml
 
-#  build:
-#    needs: set-build-params
-#    uses: virtru-corp/.github/.github/workflows/gmail-build.yaml@v1
-#    with:
-#      environment: '${{ needs.set-build-params.outputs.environment }}'
-#      channel: '${{ needs.set-build-params.outputs.channel }}'
-#      extension-id: '${{ needs.set-build-params.outputs.extension_id }}'
-#      is-release-build: "${{ needs.set-build-params.outputs.is_release_build == 'true' }}"
+  log:
+    needs: [set-build-params]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Log the inputs
+        run: |
+          echo ${{ github.ref_name }} 
 
   publish:
-    needs: [set-build-params]
+    needs: [log, set-build-params]
     uses: ./.github/workflows/publish.yaml
     with:
       artifact: 'chrome'
       extension_id: '${{ needs.set-build-params.outputs.extension_id }}'
-      channel: '${{ needs.set-build-params.outputs.channel }}'
+      channel: '${{ github.ref_name }} '

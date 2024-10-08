@@ -34,20 +34,6 @@ jobs:
       - name: Checkout application repo
         uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # v4.1.1
 
-#      - name: Output if app version changed
-#        run: |
-#          git fetch origin stable
-#          git show origin/stable:package.json > base_package.json
-#
-#          RELEASED_VERSION=$(jq -S '.version' base_package.json)
-#          VERSION=$(jq -S '.version' package.json)
-#
-#          if [ "$RELEASED_VERSION" != "$VERSION" ]; then
-#            echo "APP_VERSION_CHANGED=true" >> $GITHUB_ENV
-#          else
-#            echo "APP_VERSION_CHANGED=false" >> $GITHUB_ENV
-#          fi
-
       - name: Set build params
         id: set-build-params
         uses: actions/github-script@60a0d83039c74a4aee543508d2ffcb1c3799cdea # v7.0.1
@@ -59,8 +45,14 @@ jobs:
         with:
           script: |
             const branchConfig = require('./.github/workflows/set-build-params/config.json');
-            const ref = process.env.EVENT_NAME === 'push' ? process.env.REF_NAME : process.env.BASE_REF;
+            const pushOrDispatch = process.env.EVENT_NAME === 'push' || process.env.EVENT_NAME === 'workflow_dispatch';
+            const ref = pushOrDispatch ? process.env.REF_NAME : process.env.BASE_REF;
 
+            console.log('process.env.EVENT_NAME', process.env.EVENT_NAME);
+            console.log('process.env.REF_NAME', process.env.REF_NAME);
+            console.log('process.env.BASE_REF', process.env.BASE_REF);
+            console.log('ref', ref);
+            
             let branch = ref;
             for (const b of ['staging', 'beta', 'stable']) {
               if (branch.includes(b)) {
@@ -77,6 +69,8 @@ jobs:
               ...branchConfig['develop'],
               channel: ref
             };
+            
+            console.log('config', config);
 
             const { environment, channel, extensionId, key } = config;
 
