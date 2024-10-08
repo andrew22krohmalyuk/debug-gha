@@ -5,7 +5,8 @@ on:
 
 jobs:
   branch-warn:
-    if: "${{ github.ref_name != 'develop' || github.ref_name != 'staging' ||  github.ref_name != 'beta' }}"
+    # if: "${{ github.ref_name != 'develop' || github.ref_name != 'staging' ||  github.ref_name != 'beta' }}"
+    if: ${{ !contains(fromJson('["develop","staging","beta"]'), github.ref_name) }}
     runs-on: ubuntu-latest
 
     steps:
@@ -13,7 +14,8 @@ jobs:
         run: echo 'Publishing is allowed only for "develop", "staging" and "beta"' >> $GITHUB_STEP_SUMMARY
 
   set-build-params:
-    if: "${{ github.ref_name == 'develop' || github.ref_name == 'staging' ||  github.ref_name == 'beta' }}"
+    # if: "${{ github.ref_name == 'develop' || github.ref_name == 'staging' ||  github.ref_name == 'beta' }}"
+    if: ${{ contains(fromJson('["develop","staging","beta"]'), github.ref_name) }}
     needs: [branch-warn]
     uses: ./.github/workflows/set-build-params.yaml
 
