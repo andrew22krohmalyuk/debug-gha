@@ -6,7 +6,7 @@ on:
 jobs:
   branch-warn:
     # if: "${{ github.ref_name != 'develop' || github.ref_name != 'staging' ||  github.ref_name != 'beta' }}"
-    if: ${{ !contains(fromJson('["develop","staging","beta"]'), github.ref_name) }}
+    if: ${{ !contains(fromJSON('["develop","staging","beta"]'), github.ref_name) }}
     runs-on: ubuntu-latest
 
     steps:
@@ -15,7 +15,7 @@ jobs:
 
   set-build-params:
     # if: "${{ github.ref_name == 'develop' || github.ref_name == 'staging' ||  github.ref_name == 'beta' }}"
-    if: ${{ contains(fromJson('["develop","staging","beta"]'), github.ref_name) }}
+    if: ${{ contains(fromJSON('["develop","staging","beta"]'), github.ref_name) }}
     needs: [branch-warn]
     uses: ./.github/workflows/set-build-params.yaml
 
