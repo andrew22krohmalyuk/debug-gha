@@ -12,7 +12,10 @@ jobs:
     steps:
       - name: Warning message
         if: ${{ !contains(fromJSON('["develop","staging","beta"]'), github.ref_name) }}
-        run: echo 'Publishing is allowed only for "develop", "staging" and "beta"' >> $GITHUB_STEP_SUMMARY
+        # run: echo 'Publishing is allowed only for "develop", "staging" and "beta"' >> $GITHUB_STEP_SUMMARY
+        run: |
+          echo "::error file=branch-warn,title=Publishing is not allowed::Publishing is allowed only for 'develop', 'staging' and 'beta'"
+          exit 1
 
   set-build-params:
     # if: "${{ github.ref_name == 'develop' || github.ref_name == 'staging' ||  github.ref_name == 'beta' }}"
